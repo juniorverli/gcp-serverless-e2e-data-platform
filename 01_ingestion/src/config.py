@@ -1,4 +1,7 @@
 import os
+from typing import Iterator
+
+MessageStream = Iterator[bytes]
 
 class Config:
     def __init__(self):

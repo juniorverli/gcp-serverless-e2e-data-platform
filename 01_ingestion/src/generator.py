@@ -1,6 +1,5 @@
-from typing import Iterator
 import duckdb
-from src.config import Config
+from src.config import Config, MessageStream
 
 class TPCHGenerator:
     def __init__(self, config: Config):
@@ -22,7 +21,7 @@ class TPCHGenerator:
         result = self.connection.execute("SHOW TABLES")
         return [row[0] for row in result.fetchall()]
 
-    def iterate_table_as_bytes(self, table_name: str) -> Iterator[bytes]:
+    def iterate_table_as_bytes(self, table_name: str) -> MessageStream:
         query = f"""
             SELECT json_object(
                 'data', to_json(t),
