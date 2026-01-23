@@ -13,7 +13,7 @@ def handler(request: Request) -> tuple[str, int]:
     try:
         ingestion = TPCHIngestion(config)
         published_count = ingestion.run_single_table(config.table_name)
-        return published_count, 200
+        return str(published_count), 200
     except ValueError as e:
         return str(e), 400
 
