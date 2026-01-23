@@ -130,6 +130,10 @@ duckdb==1.4.3 \
     --hash=sha256:fbc63ffdd03835f660155b37a1b6db2005bcd46e5ad398b8cac141eb305d2a3d \
     --hash=sha256:fea43e03604c713e25a25211ada87d30cd2a044d8f27afab5deba26ac49e5268
     # via tpch-pubsub-generator
+faker==40.1.2 \
+    --hash=sha256:93503165c165d330260e4379fd6dc07c94da90c611ed3191a0174d2ab9966a42 \
+    --hash=sha256:b76a68163aa5f171d260fc24827a8349bc1db672f6a665359e8d0095e8135d30
+    # via tpch-pubsub-generator
 flask==3.1.2 \
     --hash=sha256:bf656c15c80190ed628ad08cdfd3aaa35beb087855e2f494910aa3774cc4fd87 \
     --hash=sha256:ca1d8112ec8a6158cc29ea4858963350011b5c846a414cdb7a954aa9e967d03c
@@ -219,9 +223,9 @@ grpcio-status==1.76.0 \
     # via
     #   google-api-core
     #   google-cloud-pubsub
-gunicorn==24.0.0 \
-    --hash=sha256:30401647ed4f162a3f7e5b8b3ed77e6e88d9a4ea5599f1ff31f7f54a7610339c \
-    --hash=sha256:7f6c916308740942586f49f14cf3743bdfc4130c29520c42706f42fa5a2dacdb
+gunicorn==24.1.0 \
+    --hash=sha256:6df323c06bcb9499cbf8bc3b89a56619ac54d6a8c66130681e206272cc5b8e73 \
+    --hash=sha256:d7c3e50dfdade301b1a94ed3e9a2c07ab7d154908203813c10d7b175d04bbf23
     # via
     #   functions-framework
     #   uvicorn-worker
@@ -394,6 +398,10 @@ typing-extensions==4.15.0 \
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
     #   starlette
+tzdata==2025.3 ; sys_platform == 'win32' \
+    --hash=sha256:06a47e5700f3081aab02b2e513160914ff0694bce9947d6b76ebd6bf57cfc5d1 \
+    --hash=sha256:de39c2ca5dc7b0344f2eba86f49d614019d29f060fc4ebc8a417896a620b56a7
+    # via faker
 urllib3==2.6.3 \
     --hash=sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed \
     --hash=sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4

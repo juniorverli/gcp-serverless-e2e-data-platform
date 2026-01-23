@@ -1,5 +1,5 @@
 from google.cloud import pubsub_v1
-from src.config import Config, MessageStream
+from src.config import Config, Constants
 
 class PubSubPublisher:
     def __init__(self, config: Config):
@@ -7,10 +7,10 @@ class PubSubPublisher:
         self.client = pubsub_v1.PublisherClient()
 
     def get_topic_path(self, table_name: str) -> str:
-        topic_name = f"{self.config.pubsub_topic_prefix}-{table_name}"
+        topic_name = f"{self.config.ingestion_dataset}-{table_name}"
         return self.client.topic_path(self.config.gcp_project_id, topic_name)
 
-    def publish_batch(self, table_name: str, messages: MessageStream) -> int:
+    def publish_batch(self, table_name: str, messages: Constants.MessageStream) -> int:
         topic_path = self.get_topic_path(table_name)
         batch_size = self.config.batch_size
         futures = []
