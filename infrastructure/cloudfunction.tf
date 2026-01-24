@@ -28,13 +28,13 @@ resource "google_cloudfunctions2_function" "ingestion" {
     all_traffic_on_latest_revision = true
 
     environment_variables = {
-      GCP_PROJECT_ID       = var.project_id
-      TARGET               = var.target
-      SCALE_FACTOR         = var.scale_factor
-      BATCH_SIZE           = var.batch_size
-      TPCH_TABLE_NAME      = each.key
-      DUCKDB_MEMORY_LIMIT  = var.duckdb_memory_limit
-      DUCKDB_THREADS       = var.duckdb_threads
+      GCP_PROJECT_ID      = var.project_id
+      TARGET              = var.target
+      SCALE_FACTOR        = var.scale_factor
+      BATCH_SIZE          = var.batch_size
+      TPCH_TABLE_NAME     = each.key
+      DUCKDB_MEMORY_LIMIT = var.duckdb_memory_limit
+      DUCKDB_THREADS      = var.duckdb_threads
     }
   }
 

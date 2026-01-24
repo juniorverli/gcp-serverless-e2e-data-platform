@@ -1,0 +1,172 @@
+main:
+  params: [args]
+  steps:
+    - init_shared_vars:
+        assign:
+          - results: {}
+          - tables_created: []
+          - tables: ${table_names_list}
+          - project: "${project_id}"
+          - max_retries: 30
+          - retry_interval: 10
+          - bucket: "${bronze_bucket}"
+
+    - check_execution_mode:
+        switch:
+          - condition: $${"start_at" in args and args.start_at == "wait_for_data_in_gcs"}
+            next: wait_for_data_in_gcs
+
+    - invoke_ingestion_functions:
+        parallel:
+          shared: [results]
+          concurrency_limit: 8
+          for:
+            value: table_info
+            in: ${function_urls_list}
+            steps:
+              - call_function:
+                  call: http.post
+                  args:
+                    url: $${table_info.url}
+                    auth:
+                      type: OIDC
+                    timeout: 600
+                  result: function_response
+              - store_result:
+                  assign:
+                    - results[table_info.name]: $${function_response.body}
+
+    - wait_for_data_in_gcs:
+        call: wait_for_files
+        args:
+          bucket: $${bucket}
+          tables: $${tables}
+          max_retries: $${max_retries}
+          retry_interval: $${retry_interval}
+
+    - create_external_tables:
+        parallel:
+          shared: [tables_created]
+          concurrency_limit: 8
+          for:
+            value: table_name
+            in: ${table_names_list}
+            steps:
+              - check_if_exists:
+                  try:
+                    call: googleapis.bigquery.v2.tables.get
+                    args:
+                      projectId: "${project_id}"
+                      datasetId: "${dataset_id}"
+                      tableId: $${table_name}
+                  except:
+                    as: e
+                    steps:
+                      - check_error_type:
+                          switch:
+                            - condition: $${e.code == 404}
+                              next: create_table
+                          next: raise_error
+                      - raise_error:
+                          raise: $${e}
+              - log_skip:
+                  assign:
+                    - tables_created: $${list.concat(tables_created, [table_name + " (skipped)"])}
+                  next: continue_loop
+              - create_table:
+                  try:
+                    call: googleapis.bigquery.v2.tables.insert
+                    args:
+                      projectId: "${project_id}"
+                      datasetId: "${dataset_id}"
+                      body:
+                        tableReference:
+                          projectId: "${project_id}"
+                          datasetId: "${dataset_id}"
+                          tableId: $${table_name}
+                        externalDataConfiguration:
+                          autodetect: true
+                          sourceFormat: AVRO
+                          sourceUris:
+                            - $${"gs://${bronze_bucket}/" + table_name + "/*.avro"}
+                          connectionId: "${connection_id}"
+                    result: table_result
+                  retry:
+                    predicate: $${custom_retry_predicate}
+                    max_retries: 5
+                    backoff:
+                      initial_delay: 5
+                      max_delay: 30
+                      multiplier: 2
+              - store_creation:
+                  assign:
+                    - tables_created: $${list.concat(tables_created, [table_name + " (created)"])}
+              - continue_loop:
+                  next: continue
+
+    - return_result:
+        return:
+          status: SUCCESS
+          tables_created: $${tables_created}
+          ingestion: $${results}
+
+# Predicate for retrying on 404 (IAM propagation)
+custom_retry_predicate:
+  params: [e]
+  steps:
+    - check_404:
+        switch:
+          - condition: $${e.code == 404}
+            return: true
+    - default_retries:
+        return: $${http.default_retry_predicate(e)}
+
+# Subworkflow: Wait for files to appear in GCS for each table
+wait_for_files:
+  params: [bucket, tables, max_retries, retry_interval]
+  steps:
+    - check_each_table:
+        for:
+          value: table
+          in: $${tables}
+          steps:
+            - init_table_retry:
+                assign:
+                  - table_retry_count: 0
+                  - files_found: false
+
+            - check_file_loop:
+                switch:
+                  - condition: $${files_found}
+                    next: next_table
+                  - condition: $${table_retry_count >= max_retries}
+                    raise:
+                      message: $${"Timeout waiting for files for table " + table}
+
+            - list_objects:
+                call: googleapis.storage.v1.objects.list
+                args:
+                  bucket: $${bucket}
+                  prefix: $${table + "/"}
+                  maxResults: 1
+                result: objects_list
+
+            - check_result:
+                switch:
+                  - condition: $${"items" in objects_list}
+                    assign:
+                      - files_found: true
+                    next: next_table
+
+            - increment_retry:
+                assign:
+                  - table_retry_count: $${table_retry_count + 1}
+
+            - wait_retry:
+                call: sys.sleep
+                args:
+                  seconds: $${retry_interval}
+                next: check_file_loop
+
+            - next_table:
+                return: true

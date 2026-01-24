@@ -104,3 +104,9 @@ variable "storage_source_retention_days" {
   type        = number
   default     = 7
 }
+
+variable "execute_workflow" {
+  description = "Set to true to execute the ingestion workflow after terraform apply"
+  type        = bool
+  default     = false
+}
