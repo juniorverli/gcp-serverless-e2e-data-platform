@@ -9,6 +9,7 @@ dependencies = [
     "functions-framework>=3.0.0",
     "flask>=3.0.0",
     "faker>=33.0.0",
+    "numpy>=1.26.0",
 ]
 
 [build-system]
