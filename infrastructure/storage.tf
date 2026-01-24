@@ -1,0 +1,47 @@
+# Bronze bucket - receives AVRO from Pub/Sub subscriptions
+resource "google_storage_bucket" "bronze" {
+  name                        = "${var.project_id}-bronze-${var.target}"
+  location                    = var.region
+  force_destroy               = true
+  uniform_bucket_level_access = true
+
+  lifecycle_rule {
+    condition {
+      age = var.storage_bronze_retention_days
+    }
+    action {
+      type = "Delete"
+    }
+  }
+}
+
+# Source bucket - stores Cloud Function zip
+resource "google_storage_bucket" "source" {
+  name                        = "${var.project_id}-source-${var.target}"
+  location                    = var.region
+  force_destroy               = true
+  uniform_bucket_level_access = true
+
+  lifecycle_rule {
+    condition {
+      age = var.storage_source_retention_days # Deletes old ZIPs after one week
+    }
+    action {
+      type = "Delete"
+    }
+  }
+}
+
+# Cloud Function source zip
+data "archive_file" "function_zip" {
+  type        = "zip"
+  source_dir  = "${path.module}/../01_ingestion"
+  output_path = "${path.module}/tmp/function.zip"
+  excludes    = [".venv", "__pycache__", "*.pyc", ".env", "uv.lock"]
+}
+
+resource "google_storage_bucket_object" "function_source" {
+  name   = "ingestion-${data.archive_file.function_zip.output_md5}.zip"
+  bucket = google_storage_bucket.source.name
+  source = data.archive_file.function_zip.output_path
+}
