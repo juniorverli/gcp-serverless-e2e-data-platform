@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: "{{ env_var('GCP_PROJECT_ID') }}"
+    schema: bronze_dev
+    description: "Raw data tables for the operational system"
+    tables:
+      - name: customer
+        description: "The raw customers table"
+        data_tests:
+          - unique:
+              column: message_id
+          - not_null:
+              column: message_id

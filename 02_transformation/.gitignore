@@ -1,0 +1,5 @@
+.env
+.venv
+.user.yml
+target/
+logs/
