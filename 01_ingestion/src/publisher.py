@@ -7,7 +7,7 @@ class PubSubPublisher:
         self.client = pubsub_v1.PublisherClient()
 
     def get_topic_path(self, table_name: str) -> str:
-        topic_name = f"{self.config.ingestion_dataset}-{table_name}"
+        topic_name = f"ingestion-tpch-{table_name}-{self.config.target}"
         return self.client.topic_path(self.config.gcp_project_id, topic_name)
 
     def publish_batch(self, table_name: str, messages: Constants.MessageStream) -> int:

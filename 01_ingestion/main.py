@@ -8,7 +8,7 @@ def handler(request: Request) -> tuple[str, int]:
     config = Config()
 
     if not config.table_name:
-        return "INGESTION_TABLE_NAME environment variable not set", 400
+        return "TPCH_TABLE_NAME environment variable not set", 400
 
     try:
         ingestion = TPCHIngestion(config)
