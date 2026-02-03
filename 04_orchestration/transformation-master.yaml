@@ -1,0 +1,156 @@
+main:
+  params: [args]
+  steps:
+    - init_vars:
+        assign:
+          - project: "${project_id}"
+          - region: "${region}"
+          - ingestion_workflow: "${ingestion_workflow_name}"
+          - transformation_job: "${transformation_job_name}"
+
+    - execute_ingestion_workflow:
+        call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.create
+        args:
+          parent: $${"projects/" + project + "/locations/" + region + "/workflows/" + ingestion_workflow}
+          body:
+            argument: $${json.encode_to_string(args)}
+        result: ingestion_execution
+
+    - wait_for_ingestion:
+        call: wait_for_workflow_completion
+        args:
+          execution_name: $${ingestion_execution.name}
+          project: $${project}
+          region: $${region}
+        result: ingestion_result
+
+    - check_ingestion_status:
+        switch:
+          - condition: $${ingestion_result.state != "SUCCEEDED"}
+            raise:
+              message: "Ingestion workflow failed"
+              state: $${ingestion_result.state}
+              error: $${ingestion_result.error}
+
+    - execute_transformation:
+        call: http.post
+        args:
+          url: $${"https://" + region + "-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/" + project + "/jobs/" + transformation_job + ":run"}
+          auth:
+            type: OAuth2
+          timeout: 1800
+        result: transformation_execution
+
+    - wait_for_transformation:
+        call: wait_for_job_completion
+        args:
+          execution_name: $${transformation_execution.body.metadata.name}
+          project: $${project}
+          region: $${region}
+          transformation_job: $${transformation_job}
+        result: transformation_result
+
+    - return_result:
+        return:
+          status: "SUCCESS"
+          ingestion_result: $${ingestion_result}
+          transformation_result: $${transformation_result}
+
+# Subworkflow: Wait for workflow execution to complete
+wait_for_workflow_completion:
+  params: [execution_name, project, region]
+  steps:
+    - init_polling:
+        assign:
+          - max_attempts: 360
+          - attempt: 0
+          - poll_interval: 10
+
+    - poll_loop:
+        switch:
+          - condition: $${attempt >= max_attempts}
+            raise:
+              message: "Timeout waiting for workflow completion"
+              execution: $${execution_name}
+
+    - get_execution_status:
+        call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.get
+        args:
+          name: $${execution_name}
+        result: execution_status
+
+    - check_completion:
+        switch:
+          - condition: $${execution_status.state == "SUCCEEDED"}
+            return: $${execution_status}
+          - condition: $${execution_status.state == "FAILED"}
+            return: $${execution_status}
+          - condition: $${execution_status.state == "CANCELLED"}
+            return: $${execution_status}
+
+    - increment_and_wait:
+        assign:
+          - attempt: $${attempt + 1}
+
+    - sleep_before_retry:
+        call: sys.sleep
+        args:
+          seconds: $${poll_interval}
+        next: poll_loop
+
+# Subworkflow: Wait for Cloud Run Job to complete
+wait_for_job_completion:
+  params: [execution_name, project, region, transformation_job]
+  steps:
+    - init_job_polling:
+        assign:
+          - max_attempts: 180
+          - attempt: 0
+          - poll_interval: 10
+
+    - job_poll_loop:
+        switch:
+          - condition: $${attempt >= max_attempts}
+            raise:
+              message: "Timeout waiting for transformation job completion"
+              execution: $${execution_name}
+
+    - get_job_execution:
+        call: http.get
+        args:
+          url: $${"https://" + region + "-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/" + project + "/executions/" + execution_name}
+          auth:
+            type: OAuth2
+        result: job_status
+
+    - check_job_completion:
+        switch:
+          - condition: $${"completionTime" in job_status.body.status}
+            next: evaluate_result
+
+    - increment_job_attempt:
+        assign:
+          - attempt: $${attempt + 1}
+
+    - sleep_before_job_retry:
+        call: sys.sleep
+        args:
+          seconds: $${poll_interval}
+        next: job_poll_loop
+
+    - evaluate_result:
+        switch:
+          - condition: $${"succeededCount" in job_status.body.status and job_status.body.status.succeededCount > 0}
+            return:
+              status: "SUCCEEDED"
+              details: $${job_status.body}
+          - condition: $${"failedCount" in job_status.body.status and job_status.body.status.failedCount > 0}
+            raise:
+              message: "Transformation job failed"
+              details: $${job_status.body}
+        next: return_success
+
+    - return_success:
+        return:
+          status: "SUCCEEDED"
+          details: $${job_status.body}
