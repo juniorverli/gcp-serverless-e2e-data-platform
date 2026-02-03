@@ -3,6 +3,7 @@ WITH final AS (
     SELECT
         customer.customer_id,
         customer.customer_name,
+        customer.customer_email_address,
         customer.customer_address,
         nation.nation_id,
         nation.nation_name,
@@ -25,6 +26,7 @@ WITH final AS (
 SELECT
     customer_id,
     customer_name,
+    customer_email_address,
     customer_address,
     nation_id,
     nation_name,
