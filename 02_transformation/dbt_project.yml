@@ -37,6 +37,7 @@ models:
     +materialized: table
 
     silver:
+      +catalog_name: silver_iceberg_catalog
       +schema: silver
       +tags: [silver]
 
@@ -47,9 +48,6 @@ models:
       dimension:
         +tags: [dimension, dim]
 
-      aggregate:
-        +tags: [aggregate, agg]
-
       fact:
         +tags: [fact, fct]
 
@@ -57,5 +55,6 @@ models:
         +tags: [intermediate, int]
 
     gold:
+      +catalog_name: gold_iceberg_catalog
       +schema: gold
       +tags: [gold, obt]

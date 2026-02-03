@@ -8,6 +8,26 @@ output "bronze_bucket" {
   value       = google_storage_bucket.bronze.name
 }
 
+output "silver_bucket" {
+  description = "Silver bucket name"
+  value       = google_storage_bucket.silver.name
+}
+
+output "silver_dev_bucket" {
+  description = "Silver Dev bucket name"
+  value       = google_storage_bucket.silver_dev.name
+}
+
+output "gold_bucket" {
+  description = "Gold bucket name"
+  value       = google_storage_bucket.gold.name
+}
+
+output "gold_dev_bucket" {
+  description = "Gold Dev bucket name"
+  value       = google_storage_bucket.gold_dev.name
+}
+
 output "source_bucket" {
   description = "Source bucket name"
   value       = google_storage_bucket.source.name
