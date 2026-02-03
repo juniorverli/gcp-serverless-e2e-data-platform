@@ -7,14 +7,16 @@ class FakeDataFactory:
     faker = Faker()
 
     @classmethod
-    def random_name(cls, _: int) -> str:
-        return cls.faker.name()
+    def random_company(cls, _: int) -> str:
+        return cls.faker.company()
 
     @classmethod
-    def random_email(cls, name: str) -> str:
-        name_parts = name.lower().replace(" ", ".").replace("..", ".")
-        domain = random.choice(Constants.EMAIL_DOMAINS)
-        return f"{name_parts}@{domain}"
+    def random_email(cls, company_name: str) -> str:
+        # Remove special characters and format company name as domain
+        domain = company_name.lower()
+        for char in [" ", ",", ".", "-", "'", "&", "(", ")"]:
+            domain = domain.replace(char, "")
+        return f"customer@{domain}.com"
 
 class TPCHGenerator:
     def __init__(self, config: Config):
@@ -31,7 +33,7 @@ class TPCHGenerator:
         return connection
 
     def _register_udfs(self) -> None:
-        self.connection.create_function("random_name", FakeDataFactory.random_name, [int], str)
+        self.connection.create_function("random_company", FakeDataFactory.random_company, [int], str)
         self.connection.create_function("random_email", FakeDataFactory.random_email, [str], str)
 
     def _generate_tpch_data(self) -> None:

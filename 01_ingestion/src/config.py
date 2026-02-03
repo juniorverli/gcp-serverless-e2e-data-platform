@@ -4,7 +4,6 @@ from typing import Iterator
 
 class Constants:
     MessageStream = Iterator[bytes]
-    EMAIL_DOMAINS = ["e2e.tpch", "data.corp", "analytics.io", "pipeline.dev", "warehouse.net"]
     QUERIES_DIR = Path(__file__).parent / "queries"
 
 class Config:
