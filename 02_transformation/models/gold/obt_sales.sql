@@ -1,22 +1,15 @@
-WITH base_data AS (
+WITH dates AS (
 
     SELECT
-        order_id,
-        line_number,
         customer_id,
-        order_date,
-        load_source_name,
-        return_flag_code,
-        line_status_code,
-        ship_instructions_name,
-        ship_mode_name,
-        quantity,
-        gross_revenue_value,
-        net_revenue_value,
-        cost_value,
-        tpv_value,
-        margin_value
-    FROM {{ ref("int_sales_metrics") }}
+        order_date
+    FROM {{ ref('int_sales_metrics')}}
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY
+            customer_id,
+            order_date
+        ORDER BY order_date ASC
+    ) = 1
 
 ),
 
@@ -35,28 +28,35 @@ final AS (
         calendar.is_weekend,
         customer.customer_id,
         customer.customer_name,
+        customer.customer_email_address,
         customer.customer_address,
         customer.nation_name AS customer_nation_name,
         customer.region_name AS customer_region_name,
         customer.market_segment_name,
         customer.account_balance_value,
-        base_data.order_id,
-        base_data.line_number,
-        base_data.return_flag_code,
-        base_data.line_status_code,
-        base_data.ship_instructions_name,
-        base_data.ship_mode_name,
-        base_data.quantity,
-        base_data.gross_revenue_value,
-        base_data.net_revenue_value,
-        base_data.cost_value,
-        base_data.tpv_value,
-        base_data.margin_value
-    FROM base_data
+        revenue.revenue_quantity,
+        revenue.gross_revenue_value,
+        revenue.net_revenue_value,
+        cost.cost_value,
+        tpv.tpv_value,
+        margin.margin_value
+    FROM dates
+    LEFT JOIN {{ ref('fact_revenue') }} AS revenue ON
+        revenue.customer_id = dates.customer_id
+        AND revenue.order_date = dates.order_date
+    LEFT JOIN {{ ref('fact_cost') }} AS cost ON
+        cost.customer_id = dates.customer_id
+        AND cost.order_date = dates.order_date
+    LEFT JOIN {{ ref('fact_margin') }} AS margin ON
+        margin.customer_id = dates.customer_id
+        AND margin.order_date = dates.order_date
+    LEFT JOIN {{ ref('fact_tpv') }} AS tpv ON
+        tpv.customer_id = dates.customer_id
+        AND tpv.order_date = dates.order_date
     INNER JOIN {{ ref('dim_calendar') }} AS calendar ON
-        base_data.order_date = calendar.created_date
+        dates.order_date = calendar.created_date
     INNER JOIN {{ ref('dim_customer') }} AS customer ON
-        base_data.customer_id = customer.customer_id
+        dates.customer_id = customer.customer_id
 
 )
 
@@ -73,18 +73,13 @@ SELECT
     is_weekend,
     customer_id,
     customer_name,
+    customer_email_address,
     customer_address,
     customer_nation_name,
     customer_region_name,
     market_segment_name,
     account_balance_value,
-    order_id,
-    line_number,
-    return_flag_code,
-    line_status_code,
-    ship_instructions_name,
-    ship_mode_name,
-    quantity,
+    revenue_quantity,
     gross_revenue_value,
     net_revenue_value,
     cost_value,
