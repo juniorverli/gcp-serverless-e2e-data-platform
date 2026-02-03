@@ -8,6 +8,6 @@ transformation:
       method: oauth
       priority: interactive
       project: "{{ env_var('GCP_PROJECT_ID') }}"
-      threads: 1
+      threads: 10
       type: bigquery
   target: dev

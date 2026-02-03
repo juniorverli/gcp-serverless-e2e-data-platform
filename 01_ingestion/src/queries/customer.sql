@@ -1,6 +1,6 @@
 WITH enriched AS (
 
-    SELECT * EXCLUDE(c_name), random_name() AS c_name
+    SELECT * EXCLUDE(c_name), random_name(c_custkey) AS c_name
     FROM customer
 
 )

@@ -7,7 +7,7 @@ class FakeDataFactory:
     faker = Faker()
 
     @classmethod
-    def random_name(cls) -> str:
+    def random_name(cls, _: int) -> str:
         return cls.faker.name()
 
     @classmethod
@@ -31,7 +31,7 @@ class TPCHGenerator:
         return connection
 
     def _register_udfs(self) -> None:
-        self.connection.create_function("random_name", FakeDataFactory.random_name, [], str)
+        self.connection.create_function("random_name", FakeDataFactory.random_name, [int], str)
         self.connection.create_function("random_email", FakeDataFactory.random_email, [str], str)
 
     def _generate_tpch_data(self) -> None:
