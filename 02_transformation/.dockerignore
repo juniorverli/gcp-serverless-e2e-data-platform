@@ -8,3 +8,4 @@ test.env
 __pycache__
 .env
 .user.yml
+.venv
