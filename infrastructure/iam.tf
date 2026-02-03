@@ -157,6 +157,20 @@ resource "google_project_iam_member" "workflow_connection_user" {
   member  = "serviceAccount:${google_service_account.workflow.email}"
 }
 
+# Workflow permissions - Invoke other workflows (for transformation-master)
+resource "google_project_iam_member" "workflow_workflows_invoker" {
+  project = var.project_id
+  role    = "roles/workflows.invoker"
+  member  = "serviceAccount:${google_service_account.workflow.email}"
+}
+
+# Workflow permissions - View Cloud Run Job executions (for transformation-master)
+resource "google_project_iam_member" "workflow_run_viewer" {
+  project = var.project_id
+  role    = "roles/run.viewer"
+  member  = "serviceAccount:${google_service_account.workflow.email}"
+}
+
 # Grant BigLake connection access to read from bronze bucket
 # Moved from bigquery.tf
 resource "google_storage_bucket_iam_member" "biglake_reader" {
@@ -165,4 +179,69 @@ resource "google_storage_bucket_iam_member" "biglake_reader" {
   member = "serviceAccount:${google_bigquery_connection.biglake.cloud_resource[0].service_account_id}"
 
   depends_on = [time_sleep.wait_for_biglake_sa]
+}
+
+# =============================================================================
+# Transformation Service Account & Permissions
+# =============================================================================
+
+# Service Account for Cloud Run Job
+resource "google_service_account" "transformation" {
+  account_id   = "transformation-${var.target}"
+  display_name = "Transformation Cloud Run Job SA"
+}
+
+# Grant BigQuery access to transformation SA
+resource "google_project_iam_member" "transformation_bigquery" {
+  project = var.project_id
+  role    = "roles/bigquery.dataEditor"
+  member  = "serviceAccount:${google_service_account.transformation.email}"
+}
+
+resource "google_project_iam_member" "transformation_bigquery_user" {
+  project = var.project_id
+  role    = "roles/bigquery.user"
+  member  = "serviceAccount:${google_service_account.transformation.email}"
+}
+
+# Grant BigLake Admin to transformation SA (required for BigLake Metastore / Iceberg)
+resource "google_project_iam_member" "transformation_biglake_admin" {
+  project = var.project_id
+  role    = "roles/biglake.admin"
+  member  = "serviceAccount:${google_service_account.transformation.email}"
+}
+
+# Grant BigQuery Connection Admin (includes delegate permission for BigLake/Iceberg)
+resource "google_project_iam_member" "transformation_connection_admin" {
+  project = var.project_id
+  role    = "roles/bigquery.connectionAdmin"
+  member  = "serviceAccount:${google_service_account.transformation.email}"
+}
+
+# Grant Storage access to Silver bucket (dev)
+resource "google_storage_bucket_iam_member" "transformation_silver_dev" {
+  bucket = google_storage_bucket.silver_dev.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.transformation.email}"
+}
+
+# Grant Storage access to Gold bucket (dev)
+resource "google_storage_bucket_iam_member" "transformation_gold_dev" {
+  bucket = google_storage_bucket.gold_dev.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.transformation.email}"
+}
+
+# Grant Storage access to Silver bucket (prod)
+resource "google_storage_bucket_iam_member" "transformation_silver_prod" {
+  bucket = google_storage_bucket.silver.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.transformation.email}"
+}
+
+# Grant Storage access to Gold bucket (prod)
+resource "google_storage_bucket_iam_member" "transformation_gold_prod" {
+  bucket = google_storage_bucket.gold.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.transformation.email}"
 }

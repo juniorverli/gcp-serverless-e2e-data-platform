@@ -72,3 +72,44 @@ resource "null_resource" "execute_workflow" {
 
   depends_on = [google_workflows_workflow.ingestion]
 }
+
+# Transformation Master Workflow (ingestion + dbt)
+resource "google_workflows_workflow" "transformation_master" {
+  name            = "transformation-master-${var.target}"
+  region          = var.region
+  description     = "Orchestrates end-to-end data pipeline: ingestion followed by dbt transformation"
+  service_account = google_service_account.workflow.id
+
+  source_contents = templatefile("${path.module}/../04_orchestration/transformation-master.yaml", {
+    project_id               = var.project_id
+    region                   = var.region
+    ingestion_workflow_name  = google_workflows_workflow.ingestion.name
+    transformation_job_name  = google_cloud_run_v2_job.transformation.name
+  })
+
+  depends_on = [
+    google_workflows_workflow.ingestion,
+    google_cloud_run_v2_job.transformation,
+    google_project_iam_member.workflow_run_invoker
+  ]
+}
+
+# Optional: Execute transformation master workflow via Terraform
+resource "null_resource" "execute_transformation_master" {
+  count = var.execute_transformation_master ? 1 : 0
+
+  triggers = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      gcloud workflows execute ${google_workflows_workflow.transformation_master.name} \
+        --location=${var.region} \
+        --project=${var.project_id} \
+        --format="value(name)"
+    EOT
+  }
+
+  depends_on = [google_workflows_workflow.transformation_master]
+}

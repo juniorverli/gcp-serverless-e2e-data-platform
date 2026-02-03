@@ -52,5 +52,16 @@ resource "google_cloudfunctions2_function" "ingestion" {
     google_project_iam_member.cloudbuild_builder
   ]
 }
+# Cloud Function source zip
+data "archive_file" "function_zip" {
+  type        = "zip"
+  source_dir  = "${path.module}/../01_ingestion"
+  output_path = "${path.module}/tmp/function.zip"
+  excludes    = [".venv", "__pycache__", "*.pyc", ".env", "uv.lock"]
+}
 
-
+resource "google_storage_bucket_object" "function_source" {
+  name   = "ingestion-${data.archive_file.function_zip.output_md5}.zip"
+  bucket = google_storage_bucket.source.name
+  source = data.archive_file.function_zip.output_path
+}

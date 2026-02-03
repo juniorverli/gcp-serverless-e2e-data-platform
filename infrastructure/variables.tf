@@ -110,3 +110,17 @@ variable "execute_workflow" {
   type        = bool
   default     = false
 }
+
+# Transformation Cloud Run Job Configurations
+variable "execute_transformation" {
+  description = "Set to true to execute the transformation job after terraform apply"
+  type        = bool
+  default     = false
+}
+
+# Transformation Master Workflow Configuration
+variable "execute_transformation_master" {
+  description = "Set to true to execute the transformation master workflow (ingestion + dbt) after terraform apply"
+  type        = bool
+  default     = false
+}
