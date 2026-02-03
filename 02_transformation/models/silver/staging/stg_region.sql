@@ -53,3 +53,7 @@ SELECT
     loaded_at,
     load_source_name
 FROM casted_data
+QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY region_id
+    ORDER BY loaded_at DESC
+) = 1

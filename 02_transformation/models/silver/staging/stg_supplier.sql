@@ -52,22 +52,6 @@ casted_data AS (
         CAST(supplier_comment AS STRING) AS supplier_comment
     FROM flattened
 
-),
-
-final AS (
-
-    SELECT
-        supplier_id,
-        supplier_name,
-        supplier_address,
-        nation_id,
-        supplier_phone,
-        account_balance_value,
-        supplier_comment,
-        loaded_at,
-        load_source_name
-    FROM casted_data
-
 )
 
 SELECT
@@ -81,3 +65,7 @@ SELECT
     loaded_at,
     load_source_name
 FROM casted_data
+QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY supplier_id
+    ORDER BY loaded_at DESC
+) = 1

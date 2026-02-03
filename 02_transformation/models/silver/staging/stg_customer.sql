@@ -28,7 +28,7 @@ flattened AS (
         load_source_name,
         JSON_VALUE(json_data.c_custkey) AS customer_id,
         JSON_VALUE(json_data.c_name) AS customer_name,
-        JSON_VALUE(json_data.c_email_address) AS customer_email_address,
+        JSON_VALUE(json_data.c_email) AS customer_email_address,
         JSON_VALUE(json_data.c_address) AS customer_address,
         JSON_VALUE(json_data.c_nationkey) AS nation_id,
         JSON_VALUE(json_data.c_phone) AS customer_phone,
@@ -61,6 +61,7 @@ casted_data AS (
 SELECT
     customer_id,
     customer_name,
+    customer_email_address,
     customer_address,
     nation_id,
     customer_phone,
@@ -70,3 +71,7 @@ SELECT
     loaded_at,
     load_source_name
 FROM casted_data
+QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY customer_id
+    ORDER BY loaded_at DESC
+) = 1

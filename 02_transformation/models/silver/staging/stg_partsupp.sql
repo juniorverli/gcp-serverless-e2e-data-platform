@@ -59,3 +59,9 @@ SELECT
     loaded_at,
     load_source_name
 FROM casted_data
+QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY
+        part_id,
+        supplier_id
+    ORDER BY loaded_at DESC
+) = 1
