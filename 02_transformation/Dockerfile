@@ -12,11 +12,19 @@ COPY . .
 # --frozen ensures we use the exact versions in uv.lock
 RUN uv sync --frozen
 
-# Replace 'dev' with 'prod' in profiles.yml to switch environment
-RUN sed -i 's/dev/prod/g' profiles.yml
+ARG TARGET
+
+# Conditionally replace 'dev' with 'prod' for production builds
+RUN if [ "${TARGET}" = "prod" ]; then \
+    sed -i 's/dev/prod/g' profiles.yml && \
+    sed -i 's/dev/prod/g' catalogs.yml; \
+    fi
 
 # Check if replacement worked (for build logs validation)
 RUN cat profiles.yml
+RUN cat catalogs.yml
+
+RUN uv run dbt deps
 
 # Helper script to run dbt
 ENTRYPOINT ["uv", "run", "dbt"]
