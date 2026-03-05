@@ -1,3 +1,9 @@
+# Wait for Artifact Registry IAM to propagate before pushing images
+resource "time_sleep" "wait_for_artifact_registry_iam" {
+  depends_on      = [google_project_iam_member.compute_artifact_registry]
+  create_duration = "60s"
+}
+
 # Null resource to build and push Docker image
 resource "null_resource" "transformation_image" {
   triggers = {
@@ -10,13 +16,17 @@ resource "null_resource" "transformation_image" {
     working_dir = "${path.module}/../02_transformation"
     command     = <<-EOT
       gcloud builds submit \
+        --project ${var.project_id} \
         --tag ${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.transformation.repository_id}/dbt-runner:latest \
         --machine-type=e2-highcpu-8 \
         --quiet
     EOT
   }
 
-  depends_on = [google_artifact_registry_repository.transformation]
+  depends_on = [
+    google_artifact_registry_repository.transformation,
+    time_sleep.wait_for_artifact_registry_iam
+  ]
 }
 
 # Cloud Run Job for dbt transformations

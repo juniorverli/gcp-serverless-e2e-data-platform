@@ -65,3 +65,78 @@ resource "google_storage_bucket_object" "function_source" {
   bucket = google_storage_bucket.source.name
   source = data.archive_file.function_zip.output_path
 }
+
+# =============================================================================
+# Reporting Cloud Function
+# =============================================================================
+
+data "archive_file" "reporting_zip" {
+  type        = "zip"
+  source_dir  = "${path.module}/../03_reporting"
+  output_path = "${path.module}/tmp/reporting.zip"
+  excludes    = [".venv", "__pycache__", "*.pyc", ".env", "uv.lock", "output"]
+}
+
+resource "google_storage_bucket_object" "reporting_source" {
+  name   = "reporting-${data.archive_file.reporting_zip.output_md5}.zip"
+  bucket = google_storage_bucket.source.name
+  source = data.archive_file.reporting_zip.output_path
+}
+
+resource "google_cloudfunctions2_function" "reporting" {
+  name     = "reporting-${var.target}"
+  location = var.region
+
+  build_config {
+    runtime     = "python312"
+    entry_point = "handler"
+
+    source {
+      storage_source {
+        bucket = google_storage_bucket.source.name
+        object = google_storage_bucket_object.reporting_source.name
+      }
+    }
+  }
+
+  service_config {
+    min_instance_count             = 0
+    max_instance_count             = 1
+    available_memory               = "512Mi"
+    available_cpu                  = "1"
+    timeout_seconds                = 300
+    service_account_email          = google_service_account.reporting.email
+    ingress_settings               = "ALLOW_ALL"
+    all_traffic_on_latest_revision = true
+
+    environment_variables = {
+      GCP_PROJECT_ID    = var.project_id
+      BQ_GOLD_DATASET   = "gold_${var.target}"
+      GCS_REPORT_BUCKET = google_storage_bucket.reporting.name
+    }
+  }
+
+  depends_on = [
+    google_project_service.cloudfunctions,
+    google_project_service.cloudbuild,
+    google_project_service.run,
+    google_project_service.artifactregistry,
+    google_project_iam_member.cloudbuild_logging,
+    google_project_iam_member.cloudbuild_artifact_registry,
+    google_project_iam_member.cloudbuild_storage,
+    google_project_iam_member.compute_logging,
+    google_project_iam_member.compute_artifact_registry,
+    google_project_iam_member.compute_storage,
+    google_project_iam_member.cloudbuild_builder
+  ]
+}
+
+resource "google_cloud_run_service_iam_member" "reporting_invoker" {
+  count = var.target == "dev" ? 1 : 0
+
+  project  = var.project_id
+  location = var.region
+  service  = google_cloudfunctions2_function.reporting.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}

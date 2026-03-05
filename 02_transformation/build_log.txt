@@ -1,0 +1,376 @@
+Creating temporary archive of 61 file(s) totalling 181.6 KiB before compression.
+Some files were not included in the source upload.
+
+Check the gcloud log [/home/juniormverli/.config/gcloud/logs/2026.02.23/13.51.17.383463.log] to see which files and the contents of the
+default gcloudignore file used (see `$ gcloud topic gcloudignore` to learn
+more).
+
+Uploading tarball of [.] to [gs://e2e-data-platform-485223_cloudbuild/source/1771865477.541727-c342ceb6ffab4393b14ae32b0743e342.tgz]
+Created [https://cloudbuild.googleapis.com/v1/projects/e2e-data-platform-485223/locations/global/builds/134b0ecc-49d3-4671-a9cc-ee79b9ae6229].
+Logs are available at [ https://console.cloud.google.com/cloud-build/builds/134b0ecc-49d3-4671-a9cc-ee79b9ae6229?project=198075313121 ].
+Waiting for build to complete. Polling interval: 1 second(s).
+------- REMOTE BUILD OUTPUT -------
+starting build "134b0ecc-49d3-4671-a9cc-ee79b9ae6229"
+
+FETCHSOURCE
+Fetching storage object: gs://e2e-data-platform-485223_cloudbuild/source/1771865477.541727-c342ceb6ffab4393b14ae32b0743e342.tgz#1771865478772306
+Copying gs://e2e-data-platform-485223_cloudbuild/source/1771865477.541727-c342ceb6ffab4393b14ae32b0743e342.tgz#1771865478772306...
+/ [0 files][    0.0 B/ 51.5 KiB]                                                / [1 files][ 51.5 KiB/ 51.5 KiB]                                                
+Operation completed over 1 objects/51.5 KiB.
+BUILD
+Already have image (with digest): gcr.io/cloud-builders/gcb-internal
+Sending build context to Docker daemon  248.3kB
+Step 1/12 : FROM python:3.12.12-slim
+3.12.12-slim: Pulling from library/python
+0c8d55a45c0d: Already exists
+690eaffcf0e9: Pulling fs layer
+9395e1d7be50: Pulling fs layer
+4948ee383266: Pulling fs layer
+690eaffcf0e9: Verifying Checksum
+690eaffcf0e9: Download complete
+9395e1d7be50: Verifying Checksum
+9395e1d7be50: Download complete
+4948ee383266: Verifying Checksum
+4948ee383266: Download complete
+690eaffcf0e9: Pull complete
+9395e1d7be50: Pull complete
+4948ee383266: Pull complete
+Digest: sha256:9e01bf1ae5db7649a236da7be1e94ffbbbdd7a93f867dd0d8d5720d9e1f89fab
+Status: Downloaded newer image for python:3.12.12-slim
+ ---> b3b92273ebb4
+Step 2/12 : WORKDIR /app
+ ---> Running in 689ad1fa062b
+Removing intermediate container 689ad1fa062b
+ ---> 6bb8f5174260
+Step 3/12 : COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+latest: Pulling from astral-sh/uv
+8a75ce161c36: Pulling fs layer
+45e14b7e1aeb: Pulling fs layer
+45e14b7e1aeb: Verifying Checksum
+45e14b7e1aeb: Download complete
+8a75ce161c36: Verifying Checksum
+8a75ce161c36: Download complete
+8a75ce161c36: Pull complete
+45e14b7e1aeb: Pull complete
+Digest: sha256:4cac394b6b72846f8a85a7a0e577c6d61d4e17fe2ccee65d9451a8b3c9efb4ac
+Status: Downloaded newer image for ghcr.io/astral-sh/uv:latest
+ ---> 303c65fb4759
+Step 4/12 : COPY . .
+ ---> 288a1bc1c7c7
+Step 5/12 : RUN uv sync --frozen
+ ---> Running in 17b229777a6d
+[91mUsing CPython 3.12.12 interpreter at: /usr/local/bin/python3
+Creating virtual environment at: .venv
+[0m[91mDownloading pydantic-core (2.0MiB)
+[0m[91mDownloading networkx (2.0MiB)
+[0m[91mDownloading pandas (11.8MiB)
+[0m[91mDownloading grpcio (6.3MiB)
+[0m[91mDownloading babel (9.7MiB)
+[0m[91mDownloading numpy (15.6MiB)
+[0m[91mDownloading pyarrow (45.4MiB)
+[0m[91mDownloading google-cloud-aiplatform (7.8MiB)
+[0m[91mDownloading setuptools (1.0MiB)
+[0m[91m Downloaded pydantic-core
+[0m[91m Downloaded setuptools
+[0m[91m Downloaded networkx
+[0m[91m Downloaded grpcio
+[0m[91m Downloaded babel
+[0m[91m Downloaded numpy
+[0m[91m Downloaded google-cloud-aiplatform
+[0m[91m Downloaded pyarrow
+[0m[91m Downloaded pandas
+[0m[91mPrepared 97 packages in 1.83s
+[0m[91mInstalled 97 packages in 100ms
+[0m[91m + agate==1.9.1
+ + annotated-types==0.7.0
+[0m[91m + anyio==4[0m[91m.12[0m[91m.1
+ + attrs[0m[91m==25.4.0
+ + babel[0m[91m==2.17.0[0m[91m
+ + certifi==2026.1.4
+ + [0m[91mcharset-normalizer==3.4.4
+ + click==[0m[91m8.3[0m[91m.1
+ [0m[91m+ colorama==0[0m[91m.4.6
+ [0m[91m+ daff[0m[91m==1.4[0m[91m.2
+ [0m[91m+ db-dtypes[0m[91m==1.5.0
+ + dbt-adapters==1.22.5
+ +[0m[91m dbt-bigquery==1.11.0
+ + dbt-common==1.37.2[0m[91m
+ + dbt-core==1.11.2
+ [0m[91m+ dbt-extractor==0.6.0
+ + [0m[91mdbt-protos==1[0m[91m.0.422
+ [0m[91m+ dbt-semantic-interfaces==0.9.0
+ + deepdiff[0m[91m==8.6.1
+ + distro==[0m[91m1.9.0
+[0m[91m + docstring-parser==0.17.0
+ + fastjsonschema==2.21.2
+ + google-api-core==2.29.0
+ + google-auth==2.47.0
+ + google-auth-oauthlib==1[0m[91m.2.4
+ +[0m[91m google-cloud-aiplatform[0m[91m==1[0m[91m.134.[0m[91m0
+[0m[91m +[0m[91m google-cloud-bigquery[0m[91m==3[0m[91m.40.[0m[91m0
+[0m[91m + [0m[91mgoogle-cloud-core[0m[91m==2.5.0
+ [0m[91m+ google-cloud-dataproc[0m[91m==5.[0m[91m24.[0m[91m0
+[0m[91m +[0m[91m google-cloud-resource-manager[0m[91m==1.16.0
+ + google-cloud-storage==3.1.1
+ + google-crc32c==1.8.[0m[91m0
+ + [0m[91mgoogle-genai==1.60.0[0m[91m
+ + google-resumable-media[0m[91m==2.8.0
+ + googleapis-common-protos==1.72[0m[91m.0
+ + [0m[91mgrpc-google-iam-v1==0.[0m[91m14.3[0m[91m
+ + grpcio==1.76.0
+ + grpcio-status==1.76.0
+ + h11==0.16.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + idna[0m[91m==3.11
+ + importlib-metadata==8.7.1
+ + isodate==0.7.2
+ + jinja2[0m[91m==3.1.6
+[0m[91m + [0m[91mjsonschema==4.26.0
+ + jsonschema-specifications==2025.9.1
+[0m[91m + jupyter-core==5.9.1
+ + leather[0m[91m==0.4.[0m[91m1
+ + markupsafe==3.0.3
+ + mashumaro[0m[91m==3.14
+ + more-itertools==10.8.0
+ [0m[91m+ msgpack[0m[91m==1.1.2
+ + nbformat[0m[91m==5.10.4
+[0m[91m + networkx==[0m[91m3.[0m[91m6.[0m[91m1
+ [0m[91m+ [0m[91mnumpy[0m[91m==2.[0m[91m4.1[0m[91m
+ + oauthlib==3.3.1
+ + orderly-set==[0m[91m5.5.0
+[0m[91m [0m[91m+ packaging==26.0
+ + pandas==2.3.3
+ + pandas-gbq==0.33.0
+ + [0m[91mparsedatetime==2.6
+ + pathspec==0[0m[91m.12.1
+ + [0m[91mplatformdirs==4.5.1[0m[91m
+ + proto-plus==[0m[91m1.27.[0m[91m0
+[0m[91m +[0m[91m protobuf[0m[91m==6.[0m[91m33.4
+[0m[91m + psutil[0m[91m==7.2.1[0m[91m
+ + [0m[91mpyarrow==23.0[0m[91m.0
+ + [0m[91mpyasn1==0.6.2
+ + pyasn1-modules==0.4.2
+ + pydantic==2.12[0m[91m.5
+ [0m[91m+ pydantic-core==[0m[91m2.41.5[0m[91m
+ + pydata-google-auth[0m[91m==1.9[0m[91m.1
+ +[0m[91m python-dateutil==2.9[0m[91m.0.post0
+ [0m[91m+ python-slugify==8.0.4
+ + pytimeparse==1.1[0m[91m.8
+ + pytz==2025.2
+ [0m[91m+ pyyaml==6.0.[0m[91m3
+ + referencing==0.[0m[91m37.0
+ +[0m[91m requests==[0m[91m2.32.5[0m[91m
+ + requests-oauthlib==[0m[91m2.0.0
+[0m[91m +[0m[91m rpds-py==0.30.0
+[0m[91m + rsa[0m[91m==4.9.1[0m[91m
+ +[0m[91m [0m[91msetuptools==[0m[91m80.10.1
+ + six==1.17.0
+ +[0m[91m sniffio==1.3.1[0m[91m
+ +[0m[91m snowplow-tracker==1[0m[91m.1.0
+ + sqlparse==0.5.4
+[0m[91m + tenacity[0m[91m==9.1[0m[91m.2[0m[91m
+ + text-unidecode==1.3
+ [0m[91m+ traitlets==5[0m[91m.14.3[0m[91m
+ + typing-extensions[0m[91m==4.15.[0m[91m0
+ + [0m[91mtyping-inspection==0.4.2[0m[91m
+ + tzdata==2025.3
+ + urllib3==2.6.3
+ + websockets==15.0.1
+ + zipp==3.23.0
+[0mRemoving intermediate container 17b229777a6d
+ ---> c6910ec3b99e
+Step 6/12 : ARG TARGET
+ ---> Running in ddec310db290
+Removing intermediate container ddec310db290
+ ---> f70c41de9948
+Step 7/12 : RUN if [ "${TARGET}" = "prod" ]; then     sed -i 's/dev/prod/g' profiles.yml &&     sed -i 's/dev/prod/g' catalogs.yml;     fi
+ ---> Running in 05322279de71
+Removing intermediate container 05322279de71
+ ---> ed1ade77167f
+Step 8/12 : RUN cat profiles.yml
+ ---> Running in d71228657b49
+transformation:
+  outputs:
+    dev:
+      dataset: silver
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      location: us-central1
+      method: oauth
+      priority: interactive
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      threads: 10
+      type: bigquery
+  target: dev
+Removing intermediate container d71228657b49
+ ---> 2cad0be9e061
+Step 9/12 : RUN cat catalogs.yml
+ ---> Running in 9d0f6827c654
+catalogs:
+  - name: silver_iceberg_catalog
+    active_write_integration: biglake_metastore
+    write_integrations:
+      - name: biglake_metastore
+        external_volume: "gs://{{ env_var('GCP_PROJECT_ID') }}-silver-dev"
+        table_format: iceberg
+        file_format: parquet
+        catalog_type: biglake_metastore
+
+  - name: gold_iceberg_catalog
+    active_write_integration: biglake_metastore
+    write_integrations:
+      - name: biglake_metastore
+        external_volume: "gs://{{ env_var('GCP_PROJECT_ID') }}-gold-dev"
+        table_format: iceberg
+        file_format: parquet
+        catalog_type: biglake_metastore
+Removing intermediate container 9d0f6827c654
+ ---> ff7cf70d6051
+Step 10/12 : RUN uv run dbt deps
+ ---> Running in 908facc0ee62
+[0m16:52:31  Running with dbt=1.11.2
+[0m16:52:31  Installing dbt-labs/dbt_utils
+[0m16:52:31  Installed from version 1.1.1
+[0m16:52:31  Updated version available: 1.3.3
+[0m16:52:31  
+[0m16:52:31  Updates available for packages: ['dbt-labs/dbt_utils']                 
+Update your versions in packages.yml, then run dbt deps
+Removing intermediate container 908facc0ee62
+ ---> 6389e4f7b230
+Step 11/12 : ENTRYPOINT ["uv", "run", "dbt"]
+ ---> Running in 3949da667d9a
+Removing intermediate container 3949da667d9a
+ ---> 12c2d01b2f1c
+Step 12/12 : CMD ["run", "--profiles-dir", "."]
+ ---> Running in 7e05ffa48f12
+Removing intermediate container 7e05ffa48f12
+ ---> b92824d30cd9
+Successfully built b92824d30cd9
+Successfully tagged us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+PUSH
+Pushing us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+ERROR: (gcloud.builds.submit) build 134b0ecc-49d3-4671-a9cc-ee79b9ae6229 completed with status "FAILURE"
+The push refers to repository [us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner]
+d5d665e43cec: Preparing
+13bca8018e09: Preparing
+46af6851dc03: Preparing
+328f42dbed3e: Preparing
+295d0ad991be: Preparing
+e606afe81a9a: Preparing
+50b7356375f2: Preparing
+2cb59db770d1: Preparing
+a8ff6f8cbdfd: Preparing
+denied: Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+Pushing us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+The push refers to repository [us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner]
+d5d665e43cec: Preparing
+13bca8018e09: Preparing
+46af6851dc03: Preparing
+328f42dbed3e: Preparing
+295d0ad991be: Preparing
+e606afe81a9a: Preparing
+50b7356375f2: Preparing
+2cb59db770d1: Preparing
+a8ff6f8cbdfd: Preparing
+denied: Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+Pushing us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+The push refers to repository [us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner]
+d5d665e43cec: Preparing
+13bca8018e09: Preparing
+46af6851dc03: Preparing
+328f42dbed3e: Preparing
+295d0ad991be: Preparing
+e606afe81a9a: Preparing
+50b7356375f2: Preparing
+2cb59db770d1: Preparing
+a8ff6f8cbdfd: Preparing
+denied: Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+Pushing us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+The push refers to repository [us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner]
+d5d665e43cec: Preparing
+13bca8018e09: Preparing
+46af6851dc03: Preparing
+328f42dbed3e: Preparing
+295d0ad991be: Preparing
+e606afe81a9a: Preparing
+50b7356375f2: Preparing
+2cb59db770d1: Preparing
+a8ff6f8cbdfd: Preparing
+denied: Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+Pushing us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+The push refers to repository [us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner]
+d5d665e43cec: Preparing
+13bca8018e09: Preparing
+46af6851dc03: Preparing
+328f42dbed3e: Preparing
+295d0ad991be: Preparing
+e606afe81a9a: Preparing
+50b7356375f2: Preparing
+2cb59db770d1: Preparing
+a8ff6f8cbdfd: Preparing
+denied: Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+Pushing us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+The push refers to repository [us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner]
+d5d665e43cec: Preparing
+13bca8018e09: Preparing
+46af6851dc03: Preparing
+328f42dbed3e: Preparing
+295d0ad991be: Preparing
+e606afe81a9a: Preparing
+50b7356375f2: Preparing
+2cb59db770d1: Preparing
+a8ff6f8cbdfd: Preparing
+denied: Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+Pushing us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+The push refers to repository [us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner]
+d5d665e43cec: Preparing
+13bca8018e09: Preparing
+46af6851dc03: Preparing
+328f42dbed3e: Preparing
+295d0ad991be: Preparing
+e606afe81a9a: Preparing
+50b7356375f2: Preparing
+2cb59db770d1: Preparing
+a8ff6f8cbdfd: Preparing
+denied: Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+Pushing us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+The push refers to repository [us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner]
+d5d665e43cec: Preparing
+13bca8018e09: Preparing
+46af6851dc03: Preparing
+328f42dbed3e: Preparing
+295d0ad991be: Preparing
+e606afe81a9a: Preparing
+50b7356375f2: Preparing
+2cb59db770d1: Preparing
+a8ff6f8cbdfd: Preparing
+denied: Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+Pushing us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+The push refers to repository [us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner]
+d5d665e43cec: Preparing
+13bca8018e09: Preparing
+46af6851dc03: Preparing
+328f42dbed3e: Preparing
+295d0ad991be: Preparing
+e606afe81a9a: Preparing
+50b7356375f2: Preparing
+2cb59db770d1: Preparing
+a8ff6f8cbdfd: Preparing
+denied: Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+Pushing us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest
+The push refers to repository [us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner]
+d5d665e43cec: Preparing
+13bca8018e09: Preparing
+46af6851dc03: Preparing
+328f42dbed3e: Preparing
+295d0ad991be: Preparing
+e606afe81a9a: Preparing
+50b7356375f2: Preparing
+2cb59db770d1: Preparing
+a8ff6f8cbdfd: Preparing
+denied: Permission 'artifactregistry.repositories.uploadArtifacts' denied on resource (or it may not exist).
+ERROR: failed to push because we ran out of retries.
+ERROR
+ERROR: error pushing image "us-central1-docker.pkg.dev/e2e-data-platform-prod/transformation-prod/dbt-runner:latest": retry budget exhausted (10 attempts): step exited with non-zero status: 1
+-----------------------------------

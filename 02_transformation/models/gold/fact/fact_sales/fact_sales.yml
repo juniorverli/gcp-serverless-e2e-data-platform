@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: fact_sales
+    description: '{{ doc("fact_sales") }}'
+    columns:
+      - name: sales_uid
+        description: '{{ doc("fact_sales_sales_uid") }}'
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: '{{ doc("customer_id") }}'
+        data_tests:
+          - not_null
+      - name: order_date
+        description: '{{ doc("stg_orders_order_date") }}'
+        data_tests:
+          - not_null
+      - name: quantity
+        description: '{{ doc("stg_lineitem_quantity") }}'
+      - name: tpv_value
+        description: '{{ doc("int_sales_metrics_tpv_value") }}'
+      - name: net_revenue_value
+        description: '{{ doc("int_sales_metrics_net_revenue_value") }}'
+      - name: cost_value
+        description: '{{ doc("int_sales_metrics_cost_value") }}'
+      - name: margin_value
+        description: '{{ doc("int_sales_metrics_margin_value") }}'

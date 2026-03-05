@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: dim_calendar
+    description: '{{ doc("dim_calendar") }}'
+    columns:
+      - name: created_date
+        description: '{{ doc("int_calendar_created_date") }}'
+        data_tests:
+          - unique
+          - not_null
+      - name: year
+        description: '{{ doc("int_calendar_year") }}'
+      - name: quarter
+        description: '{{ doc("int_calendar_quarter") }}'
+      - name: month
+        description: '{{ doc("int_calendar_month") }}'
+      - name: month_name
+        description: '{{ doc("int_calendar_month_name") }}'
+      - name: week_of_year
+        description: '{{ doc("int_calendar_week_of_year") }}'
+      - name: day_of_month
+        description: '{{ doc("int_calendar_day_of_month") }}'
+      - name: day_of_week
+        description: '{{ doc("int_calendar_day_of_week") }}'
+      - name: day_name
+        description: '{{ doc("int_calendar_day_name") }}'
+      - name: is_weekend
+        description: '{{ doc("int_calendar_is_weekend") }}'

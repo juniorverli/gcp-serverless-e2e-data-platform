@@ -33,6 +33,11 @@ output "source_bucket" {
   value       = google_storage_bucket.source.name
 }
 
+output "reporting_bucket" {
+  description = "Reporting bucket name"
+  value       = google_storage_bucket.reporting.name
+}
+
 output "pubsub_topics" {
   description = "Pub/Sub topic names"
   value       = { for k, v in google_pubsub_topic.tpch_tables : k => v.name }
@@ -56,4 +61,18 @@ output "workflow_name" {
 output "workflow_execute_command" {
   description = "Command to execute the ingestion workflow"
   value       = "gcloud workflows execute ${google_workflows_workflow.ingestion.name} --location=${var.region}"
+}
+
+output "reporting_function_url" {
+  description = "Reporting Cloud Function URL"
+  value       = google_cloudfunctions2_function.reporting.service_config[0].uri
+}
+
+# =============================================================================
+# Data Masking Outputs
+# =============================================================================
+
+output "name_policy_tag" {
+  description = "Full resource name of the name policy tag (use in dbt_project.yml vars)"
+  value       = google_data_catalog_policy_tag.name.name
 }

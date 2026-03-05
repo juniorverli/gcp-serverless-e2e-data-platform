@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: '{{ doc("dim_customer") }}'
+    columns:
+      - name: customer_id
+        description: '{{ doc("customer_id") }}'
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_name
+        description: '{{ doc("stg_customer_customer_name") }}'
+      - name: customer_email_address
+        description: '{{ doc("stg_customer_customer_email_address") }}'
+      - name: customer_address
+        description: '{{ doc("stg_customer_customer_address") }}'
+      - name: nation_id
+        description: '{{ doc("nation_id") }}'
+      - name: nation_name
+        description: '{{ doc("stg_nation_nation_name") }}'
+      - name: region_id
+        description: '{{ doc("region_id") }}'
+      - name: region_name
+        description: '{{ doc("stg_region_region_name") }}'
+      - name: customer_phone
+        description: '{{ doc("stg_customer_customer_phone") }}'
+      - name: account_balance_value
+        description: '{{ doc("stg_customer_account_balance_value") }}'
+      - name: market_segment_name
+        description: '{{ doc("stg_customer_market_segment_name") }}'
+      - name: customer_comment
+        description: '{{ doc("stg_customer_customer_comment") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+      - name: load_source_name
+        description: '{{ doc("load_source_name") }}'

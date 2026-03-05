@@ -61,3 +61,17 @@ resource "google_project_service" "bigqueryconnection" {
 
   disable_on_destroy = false
 }
+
+resource "google_project_service" "datacatalog" {
+  project = var.project_id
+  service = "datacatalog.googleapis.com"
+
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "bigquerydatapolicy" {
+  project = var.project_id
+  service = "bigquerydatapolicy.googleapis.com"
+
+  disable_on_destroy = false
+}

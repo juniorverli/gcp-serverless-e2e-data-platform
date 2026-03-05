@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: stg_supplier
+    description: '{{ doc("stg_supplier") }}'
+    columns:
+      - name: supplier_id
+        description: '{{ doc("supplier_id") }}'
+        data_tests:
+          - unique
+          - not_null
+      - name: supplier_name
+        description: '{{ doc("stg_supplier_supplier_name") }}'
+        data_tests:
+          - not_null
+      - name: supplier_address
+        description: '{{ doc("stg_supplier_supplier_address") }}'
+      - name: nation_id
+        description: '{{ doc("nation_id") }}'
+        data_tests:
+          - not_null
+      - name: supplier_phone
+        description: '{{ doc("stg_supplier_supplier_phone") }}'
+      - name: account_balance_value
+        description: '{{ doc("stg_customer_account_balance_value") }}'
+      - name: supplier_comment
+        description: '{{ doc("stg_supplier_supplier_comment") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        data_tests:
+          - not_null
+      - name: load_source_name
+        description: '{{ doc("load_source_name") }}'
+        data_tests:
+          - not_null

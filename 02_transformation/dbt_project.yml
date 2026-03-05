@@ -45,16 +45,22 @@ models:
         +tags: [staging, stg]
         +materialized: view
 
-      dimension:
-        +tags: [dimension, dim]
-
-      fact:
-        +tags: [fact, fct]
-
       intermediate:
         +tags: [intermediate, int]
 
     gold:
       +catalog_name: gold_iceberg_catalog
       +schema: gold
-      +tags: [gold, obt]
+      +tags: [gold]
+
+      obt:
+        +tags: [obt]
+
+      dimension:
+        +tags: [dimension, dim]
+
+      fact:
+        +tags: [fact, fct]
+
+vars:
+  name_policy_tag: "projects/e2e-data-platform-485223/locations/us-central1/taxonomies/204260337656067717/policyTags/1552967506498991132"

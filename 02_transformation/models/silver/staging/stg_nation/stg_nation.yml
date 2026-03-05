@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: stg_nation
+    description: '{{ doc("stg_nation") }}'
+    columns:
+      - name: nation_id
+        description: '{{ doc("nation_id") }}'
+        data_tests:
+          - unique
+          - not_null
+      - name: nation_name
+        description: '{{ doc("stg_nation_nation_name") }}'
+        data_tests:
+          - not_null
+      - name: region_id
+        description: '{{ doc("region_id") }}'
+        data_tests:
+          - not_null
+      - name: nation_comment
+        description: '{{ doc("stg_nation_nation_comment") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        data_tests:
+          - not_null
+      - name: load_source_name
+        description: '{{ doc("load_source_name") }}'
+        data_tests:
+          - not_null

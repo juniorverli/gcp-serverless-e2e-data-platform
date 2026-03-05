@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Analytics Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f59e0b;
+            --accent-pink: #ec4899;
+            --accent-red: #ef4444;
+            --border-color: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            font-size: 0.8rem;
+            /* Further reduced from 0.9rem */
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            /* Reverted to original */
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            /* Reverted to original */
+            padding: 2.5rem;
+            /* Reverted to original */
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            /* Further reduced from 1.8rem */
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.75rem;
+            /* Further reduced from 0.85rem */
+            font-weight: 400;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 2.5rem;
+            /* Reverted to original */
+        }
+
+        .section-title {
+            font-size: 1.0rem;
+            /* Further reduced from 1.1rem */
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            /* Reverted to original */
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            /* Reverted to original */
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            /* Reverted to original */
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .kpi-label {
+            font-size: 0.65rem;
+            /* Further reduced from 0.7rem */
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 1.25rem;
+            /* Further reduced from 1.4rem */
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Charts */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            /* Reverted to original */
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            /* Reverted to original */
+            box-shadow: var(--shadow);
+        }
+
+        .chart-card h3 {
+            font-size: 0.8rem;
+            /* Further reduced from 0.9rem */
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+
+        /* Tables */
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            /* Reverted to original */
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+
+        .table-card h3 {
+            font-size: 0.8rem;
+            /* Further reduced from 0.9rem */
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            /* Further reduced from 0.8rem */
+        }
+
+        thead th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.6rem;
+            /* Further reduced from 0.65rem */
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        thead th.right {
+            text-align: right;
+        }
+
+        tbody td {
+            padding: 0.6rem 1rem;
+            /* Slightly reduced vertical padding */
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        tbody td.right {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        tbody tr:hover {
+            background: var(--bg-card-hover);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            /* Reduced from 28px */
+            height: 24px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.65rem;
+            /* Further reduced from 0.7rem */
+        }
+
+        .rank-1 {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #1e293b;
+        }
+
+        .rank-2 {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+            color: #1e293b;
+        }
+
+        .rank-3 {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: #1e293b;
+        }
+
+        .rank-default {
+            background: var(--bg-card-hover);
+            color: var(--text-secondary);
+        }
+
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            /* Reverted to original */
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            /* Further reduced from 0.75rem */
+            border-top: 1px solid var(--border-color);
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .chart-grid,
+            .table-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 Sales Analytics Report</h1>
+            <div class="subtitle">Generated on {{ generated_at }}</div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="section">
+            <div class="section-title">Key Performance Indicators</div>
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Orders</div>
+                    <div class="kpi-value" style="color: var(--accent-blue)">{{ kpis.total_orders }}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Unique Customers</div>
+                    <div class="kpi-value" style="color: var(--accent-purple)">{{ kpis.unique_customers }}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Quantity</div>
+                    <div class="kpi-value" style="color: var(--accent-cyan)">{{ kpis.total_quantity | number }}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">TPV</div>
+                    <div class="kpi-value" style="color: var(--accent-green)">{{ kpis.tpv | currency }}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Net Revenue</div>
+                    <div class="kpi-value" style="color: var(--accent-green)">{{ kpis.net_revenue | currency }}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Cost</div>
+                    <div class="kpi-value" style="color: var(--accent-orange)">{{ kpis.total_cost | currency }}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Margin</div>
+                    <div class="kpi-value" style="color: var(--accent-green)">{{ kpis.total_margin | currency }}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Margin %</div>
+                    <div class="kpi-value" style="color: var(--accent-green)">{{ kpis.margin_pct }}%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="section">
+            <div class="section-title">Revenue Overview</div>
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <h3>Revenue by Year</h3>
+                    <div class="chart-container">
+                        <canvas id="revenueByYearChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>Revenue by Region</h3>
+                    <div class="chart-container">
+                        <canvas id="revenueByRegionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="chart-grid">
+                <div class="chart-card" style="grid-column: 1 / -1;">
+                    <h3>Monthly Revenue Trend</h3>
+                    <div class="chart-container">
+                        <canvas id="monthlyRevenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Customers -->
+        <div class="section">
+            <div class="section-title">Top Customers</div>
+            <div class="table-grid">
+                <div class="table-card">
+                    <h3>🏆 Top 10 by TPV</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Customer</th>
+                                <th>Region</th>
+                                <th class="right">Orders</th>
+                                <th class="right">TPV</th>
+                                <th class="right">Margin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in top_customers_revenue %}
+                            <tr>
+                                <td>
+                                    <span
+                                        class="rank-badge {% if c.rank == 1 %}rank-1{% elif c.rank == 2 %}rank-2{% elif c.rank == 3 %}rank-3{% else %}rank-default{% endif %}">
+                                        {{ c.rank }}
+                                    </span>
+                                </td>
+                                <td>{{ c.customer_name }}</td>
+                                <td>{{ c.customer_region_name }}</td>
+                                <td class="right">{{ c.total_orders }}</td>
+                                <td class="right">{{ c.gross_revenue | currency }}</td>
+                                <td class="right">{{ c.margin | currency }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-card">
+                    <h3>📦 Top 10 by Quantity</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Customer</th>
+                                <th>Region</th>
+                                <th class="right">Orders</th>
+                                <th class="right">Quantity</th>
+                                <th class="right">TPV</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in top_customers_quantity %}
+                            <tr>
+                                <td>
+                                    <span
+                                        class="rank-badge {% if c.rank == 1 %}rank-1{% elif c.rank == 2 %}rank-2{% elif c.rank == 3 %}rank-3{% else %}rank-default{% endif %}">
+                                        {{ c.rank }}
+                                    </span>
+                                </td>
+                                <td>{{ c.customer_name }}</td>
+                                <td>{{ c.customer_region_name }}</td>
+                                <td class="right">{{ c.total_orders }}</td>
+                                <td class="right">{{ c.quantity | number }}</td>
+                                <td class="right">{{ c.gross_revenue | currency }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- By Region / Nation -->
+        <div class="section">
+            <div class="section-title">Regional Breakdown</div>
+            <div class="table-grid">
+                <div class="table-card">
+                    <h3>🌍 TPV by Region</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th class="right">Customers</th>
+                                <th class="right">TPV</th>
+                                <th class="right">Net Revenue</th>
+                                <th class="right">Margin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in revenue_by_region %}
+                            <tr>
+                                <td>{{ r.customer_region_name }}</td>
+                                <td class="right">{{ r.customers }}</td>
+                                <td class="right">{{ r.gross_revenue | currency }}</td>
+                                <td class="right">{{ r.net_revenue | currency }}</td>
+                                <td class="right">{{ r.margin | currency }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-card">
+                    <h3>🏳️ Top 15 Nations by TPV</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nation</th>
+                                <th>Region</th>
+                                <th class="right">Customers</th>
+                                <th class="right">TPV</th>
+                                <th class="right">Margin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for n in revenue_by_nation %}
+                            <tr>
+                                <td>{{ n.customer_nation_name }}</td>
+                                <td>{{ n.customer_region_name }}</td>
+                                <td class="right">{{ n.customers }}</td>
+                                <td class="right">{{ n.gross_revenue | currency }}</td>
+                                <td class="right">{{ n.margin | currency }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Segment -->
+        <div class="section">
+            <div class="section-title">Market Segment</div>
+            <div class="table-card">
+                <h3>📈 TPV by Market Segment</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Segment</th>
+                            <th class="right">Customers</th>
+                            <th class="right">Quantity</th>
+                            <th class="right">TPV</th>
+                            <th class="right">Net Revenue</th>
+                            <th class="right">Margin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in revenue_by_segment %}
+                        <tr>
+                            <td>{{ s.market_segment_name }}</td>
+                            <td class="right">{{ s.customers }}</td>
+                            <td class="right">{{ s.quantity | number }}</td>
+                            <td class="right">{{ s.gross_revenue | currency }}</td>
+                            <td class="right">{{ s.net_revenue | currency }}</td>
+                            <td class="right">{{ s.margin | currency }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Sales Analytics Report &mdash; Generated on {{ generated_at }}
+        </div>
+    </div>
+
+    <script>
+        const chartColors = {
+            blue: '#3b82f6',
+            cyan: '#06b6d4',
+            green: '#10b981',
+            purple: '#8b5cf6',
+            orange: '#f59e0b',
+            pink: '#ec4899',
+            red: '#ef4444',
+        };
+
+        const gridColor = 'rgba(148, 163, 184, 0.1)';
+        const textColor = '#94a3b8';
+
+        Chart.defaults.color = textColor;
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        // Revenue by Year
+        const yearData = {{ revenue_by_year | tojson }};
+        new Chart(document.getElementById('revenueByYearChart'), {
+            type: 'bar',
+            data: {
+                labels: yearData.map(d => d.order_year),
+                datasets: [
+                    {
+                        label: 'TPV',
+                        data: yearData.map(d => d.gross_revenue),
+                        backgroundColor: chartColors.blue + '99',
+                        borderColor: chartColors.blue,
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    },
+                    {
+                        label: 'Cost',
+                        data: yearData.map(d => d.cost),
+                        backgroundColor: chartColors.orange + '99',
+                        borderColor: chartColors.orange,
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    },
+                    {
+                        label: 'Margin',
+                        data: yearData.map(d => d.margin),
+                        backgroundColor: chartColors.green + '99',
+                        borderColor: chartColors.green,
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' } },
+                scales: {
+                    x: { grid: { color: gridColor } },
+                    y: {
+                        grid: { color: gridColor },
+                        ticks: { callback: v => '$' + (v / 1e6).toFixed(1) + 'M' }
+                    }
+                }
+            }
+        });
+
+        // Revenue by Region (Doughnut)
+        const regionData = {{ revenue_by_region | tojson }};
+        const regionColors = [chartColors.blue, chartColors.cyan, chartColors.green, chartColors.purple, chartColors.orange, chartColors.pink, chartColors.red];
+        new Chart(document.getElementById('revenueByRegionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: regionData.map(d => d.customer_region_name),
+                datasets: [{
+                    data: regionData.map(d => d.gross_revenue),
+                    backgroundColor: regionColors.slice(0, regionData.length).map(c => c + 'cc'),
+                    borderColor: regionColors.slice(0, regionData.length),
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '55%',
+                plugins: {
+                    legend: { position: 'right' },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => {
+                                const val = ctx.parsed;
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct = ((val / total) * 100).toFixed(1);
+                                return `$${(val / 1e6).toFixed(2)}M (${pct}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Monthly Revenue Trend
+        const monthData = {{ revenue_by_month | tojson }};
+        new Chart(document.getElementById('monthlyRevenueChart'), {
+            type: 'line',
+            data: {
+                labels: monthData.map(d => d.period),
+                datasets: [
+                    {
+                        label: 'TPV',
+                        data: monthData.map(d => d.gross_revenue),
+                        borderColor: chartColors.blue,
+                        backgroundColor: chartColors.blue + '20',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2,
+                        pointHoverRadius: 5,
+                    },
+                    {
+                        label: 'Net Revenue',
+                        data: monthData.map(d => d.net_revenue),
+                        borderColor: chartColors.green,
+                        backgroundColor: chartColors.green + '15',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2,
+                        pointHoverRadius: 5,
+                    },
+                    {
+                        label: 'Margin',
+                        data: monthData.map(d => d.margin),
+                        borderColor: chartColors.purple,
+                        backgroundColor: chartColors.purple + '10',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2,
+                        pointHoverRadius: 5,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: { legend: { position: 'top' } },
+                scales: {
+                    x: {
+                        grid: { color: gridColor },
+                        ticks: { maxTicksLimit: 20 }
+                    },
+                    y: {
+                        grid: { color: gridColor },
+                        ticks: { callback: v => '$' + (v / 1e6).toFixed(1) + 'M' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

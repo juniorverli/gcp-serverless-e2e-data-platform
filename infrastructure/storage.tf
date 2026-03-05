@@ -100,3 +100,20 @@ resource "google_storage_bucket" "source" {
     }
   }
 }
+
+# Reporting bucket - stores generated HTML reports
+resource "google_storage_bucket" "reporting" {
+  name                        = "${var.project_id}-reporting-${var.target}"
+  location                    = var.region
+  force_destroy               = true
+  uniform_bucket_level_access = true
+
+  lifecycle_rule {
+    condition {
+      age = 90
+    }
+    action {
+      type = "Delete"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: int_sales_metrics
+    description: '{{ doc("int_sales_metrics") }}'
+    columns:
+      - name: order_id
+        description: '{{ doc("order_id") }}'
+        data_tests:
+          - not_null
+      - name: line_number
+        description: '{{ doc("line_number") }}'
+        data_tests:
+          - not_null
+      - name: customer_id
+        description: '{{ doc("customer_id") }}'
+        data_tests:
+          - not_null
+      - name: part_id
+        description: '{{ doc("part_id") }}'
+      - name: supplier_id
+        description: '{{ doc("supplier_id") }}'
+      - name: order_date
+        description: '{{ doc("stg_orders_order_date") }}'
+        data_tests:
+          - not_null
+      - name: load_source_name
+        description: '{{ doc("load_source_name") }}'
+      - name: return_flag_code
+        description: '{{ doc("stg_lineitem_return_flag_code") }}'
+      - name: line_status_code
+        description: '{{ doc("stg_lineitem_line_status_code") }}'
+      - name: ship_instructions_name
+        description: '{{ doc("stg_lineitem_ship_instructions_name") }}'
+      - name: ship_mode_name
+        description: '{{ doc("stg_lineitem_ship_mode_name") }}'
+      - name: quantity
+        description: '{{ doc("stg_lineitem_quantity") }}'
+      - name: tpv_value
+        description: '{{ doc("int_sales_metrics_tpv_value") }}'
+      - name: net_revenue_value
+        description: '{{ doc("int_sales_metrics_net_revenue_value") }}'
+      - name: cost_value
+        description: '{{ doc("int_sales_metrics_cost_value") }}'
+      - name: margin_value
+        description: '{{ doc("int_sales_metrics_margin_value") }}'

@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: '{{ doc("stg_orders") }}'
+    columns:
+      - name: order_id
+        description: '{{ doc("order_id") }}'
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: '{{ doc("customer_id") }}'
+        data_tests:
+          - not_null
+      - name: order_status_code
+        description: '{{ doc("stg_orders_order_status_code") }}'
+      - name: total_price_value
+        description: '{{ doc("stg_orders_total_price_value") }}'
+      - name: order_date
+        description: '{{ doc("stg_orders_order_date") }}'
+        data_tests:
+          - not_null
+      - name: order_priority_code
+        description: '{{ doc("stg_orders_order_priority_code") }}'
+      - name: clerk_name
+        description: '{{ doc("stg_orders_clerk_name") }}'
+      - name: ship_priority
+        description: '{{ doc("stg_orders_ship_priority") }}'
+      - name: order_comment
+        description: '{{ doc("stg_orders_order_comment") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        data_tests:
+          - not_null
+      - name: load_source_name
+        description: '{{ doc("load_source_name") }}'
+        data_tests:
+          - not_null

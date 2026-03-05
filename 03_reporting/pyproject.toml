@@ -1,0 +1,19 @@
+[project]
+name = "reporting"
+version = "1.0.0"
+description = "Sales Analytics Report"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "google-cloud-bigquery>=3.17.0",
+    "google-cloud-bigquery-storage>=2.24.0",
+    "google-cloud-storage>=2.14.0",
+    "duckdb>=1.0.0",
+    "pyarrow>=15.0.0",
+    "jinja2>=3.1.0",
+    "functions-framework>=3.0.0",
+    "flask>=3.0.0",
+]
+
+[tool.uv]
+package = false

@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: stg_lineitem
+    description: '{{ doc("stg_lineitem") }}'
+    columns:
+      - name: order_id
+        description: '{{ doc("order_id") }}'
+        data_tests:
+          - not_null
+      - name: part_id
+        description: '{{ doc("part_id") }}'
+        data_tests:
+          - not_null
+      - name: supplier_id
+        description: '{{ doc("supplier_id") }}'
+        data_tests:
+          - not_null
+      - name: line_number
+        description: '{{ doc("line_number") }}'
+        data_tests:
+          - not_null
+      - name: quantity
+        description: '{{ doc("stg_lineitem_quantity") }}'
+      - name: extended_price_value
+        description: '{{ doc("stg_lineitem_extended_price_value") }}'
+      - name: discount_percent
+        description: '{{ doc("stg_lineitem_discount_percent") }}'
+      - name: tax_percent
+        description: '{{ doc("stg_lineitem_tax_percent") }}'
+      - name: return_flag_code
+        description: '{{ doc("stg_lineitem_return_flag_code") }}'
+      - name: line_status_code
+        description: '{{ doc("stg_lineitem_line_status_code") }}'
+      - name: ship_date
+        description: '{{ doc("stg_lineitem_ship_date") }}'
+      - name: commit_date
+        description: '{{ doc("stg_lineitem_commit_date") }}'
+      - name: receipt_date
+        description: '{{ doc("stg_lineitem_receipt_date") }}'
+      - name: ship_instructions_name
+        description: '{{ doc("stg_lineitem_ship_instructions_name") }}'
+      - name: ship_mode_name
+        description: '{{ doc("stg_lineitem_ship_mode_name") }}'
+      - name: line_comment
+        description: '{{ doc("stg_lineitem_line_comment") }}'
+      - name: loaded_at
+        description: '{{ doc("loaded_at") }}'
+        data_tests:
+          - not_null
+      - name: load_source_name
+        description: '{{ doc("load_source_name") }}'
+        data_tests:
+          - not_null

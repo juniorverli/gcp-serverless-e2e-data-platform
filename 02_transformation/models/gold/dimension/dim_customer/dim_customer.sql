@@ -1,4 +1,4 @@
-WITH final AS (
+WITH customer_info AS (
 
     SELECT
         customer.customer_id,
@@ -38,4 +38,4 @@ SELECT
     customer_comment,
     loaded_at,
     load_source_name
-FROM final
+FROM customer_info

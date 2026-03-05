@@ -1,0 +1,61 @@
+version: 2
+
+models:
+  - name: obt_sales
+    description: '{{ doc("obt_sales") }}'
+    columns:
+      - name: order_date
+        description: '{{ doc("stg_orders_order_date") }}'
+        data_tests:
+          - not_null
+      - name: order_year
+        description: '{{ doc("obt_sales_order_year") }}'
+      - name: order_month
+        description: '{{ doc("obt_sales_order_month") }}'
+      - name: order_month_name
+        description: '{{ doc("obt_sales_order_month_name") }}'
+      - name: quarter
+        description: '{{ doc("int_calendar_quarter") }}'
+      - name: week_of_year
+        description: '{{ doc("int_calendar_week_of_year") }}'
+      - name: day_of_month
+        description: '{{ doc("int_calendar_day_of_month") }}'
+      - name: day_of_week
+        description: '{{ doc("int_calendar_day_of_week") }}'
+      - name: day_name
+        description: '{{ doc("int_calendar_day_name") }}'
+      - name: is_weekend
+        description: '{{ doc("int_calendar_is_weekend") }}'
+      - name: customer_id
+        description: '{{ doc("customer_id") }}'
+        data_tests:
+          - not_null
+      - name: customer_name
+        description: '{{ doc("stg_customer_customer_name") }}'
+        policy_tags:
+          - '{{ var("name_policy_tag") }}'
+
+      - name: customer_email_address
+        description: '{{ doc("stg_customer_customer_email_address") }}'
+        policy_tags:
+          - '{{ var("email_policy_tag") }}'
+      - name: customer_address
+        description: '{{ doc("stg_customer_customer_address") }}'
+      - name: customer_nation_name
+        description: '{{ doc("obt_sales_customer_nation_name") }}'
+      - name: customer_region_name
+        description: '{{ doc("obt_sales_customer_region_name") }}'
+      - name: market_segment_name
+        description: '{{ doc("stg_customer_market_segment_name") }}'
+      - name: account_balance_value
+        description: '{{ doc("stg_customer_account_balance_value") }}'
+      - name: revenue_quantity
+        description: '{{ doc("obt_sales_revenue_quantity") }}'
+      - name: tpv_value
+        description: '{{ doc("int_sales_metrics_tpv_value") }}'
+      - name: net_revenue_value
+        description: '{{ doc("int_sales_metrics_net_revenue_value") }}'
+      - name: cost_value
+        description: '{{ doc("int_sales_metrics_cost_value") }}'
+      - name: margin_value
+        description: '{{ doc("int_sales_metrics_margin_value") }}'

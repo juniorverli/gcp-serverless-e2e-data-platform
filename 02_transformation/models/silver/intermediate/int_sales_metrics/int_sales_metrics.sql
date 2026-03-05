@@ -39,10 +39,9 @@ cost_calculation AS (
         ship_instructions_name,
         ship_mode_name,
         quantity,
-        extended_price_value AS gross_revenue_value,
+        extended_price_value AS tpv_value,
         net_item_sales_value AS net_revenue_value,
-        supply_cost_value * quantity AS cost_value,
-        extended_price_value AS tpv_value
+        supply_cost_value * quantity AS cost_value
     FROM joined_data
 
 ),
@@ -62,10 +61,9 @@ margin_calculation AS (
         ship_instructions_name,
         ship_mode_name,
         quantity,
-        gross_revenue_value,
+        tpv_value,
         net_revenue_value,
         cost_value,
-        tpv_value,
         net_revenue_value - cost_value AS margin_value
     FROM cost_calculation
 
@@ -84,9 +82,8 @@ SELECT
     ship_instructions_name,
     ship_mode_name,
     quantity,
-    gross_revenue_value,
+    tpv_value,
     net_revenue_value,
     cost_value,
-    tpv_value,
     margin_value
 FROM margin_calculation

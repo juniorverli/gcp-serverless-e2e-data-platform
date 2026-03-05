@@ -74,10 +74,10 @@ resource "google_project_iam_member" "compute_logging" {
   depends_on = [google_project_service.cloudfunctions]
 }
 
-# Compute Engine SA - Artifact Registry Reader
+# Compute Engine SA - Artifact Registry Writer (required for Cloud Build image push)
 resource "google_project_iam_member" "compute_artifact_registry" {
   project = var.project_id
-  role    = "roles/artifactregistry.reader"
+  role    = "roles/artifactregistry.writer"
   member  = "serviceAccount:${local.compute_service_account}"
 
   depends_on = [google_project_service.cloudfunctions]
@@ -97,6 +97,15 @@ resource "google_project_iam_member" "cloudbuild_builder" {
   project = var.project_id
   role    = "roles/cloudbuild.builds.builder"
   member  = "serviceAccount:${local.compute_service_account}"
+}
+
+# Cloud Build Service Agent - Artifact Registry Writer (required for image push)
+resource "google_project_iam_member" "cloudbuild_agent_artifact_registry" {
+  project = var.project_id
+  role    = "roles/artifactregistry.writer"
+  member  = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-cloudbuild.iam.gserviceaccount.com"
+
+  depends_on = [google_project_service.cloudbuild]
 }
 # Cloud Function Invoker - Allow unauthenticated invocations (for testing in dev)
 resource "google_cloud_run_service_iam_member" "invoker" {
@@ -244,4 +253,51 @@ resource "google_storage_bucket_iam_member" "transformation_gold_prod" {
   bucket = google_storage_bucket.gold.name
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.transformation.email}"
+}
+
+# =============================================================================
+# Reporting Service Account & Permissions
+# =============================================================================
+
+resource "google_service_account" "reporting" {
+  account_id   = "reporting-${var.target}"
+  display_name = "Reporting Cloud Function SA (${var.target})"
+}
+
+resource "google_project_iam_member" "reporting_bigquery_viewer" {
+  project = var.project_id
+  role    = "roles/bigquery.dataViewer"
+  member  = "serviceAccount:${google_service_account.reporting.email}"
+}
+
+resource "google_project_iam_member" "reporting_bigquery_job_user" {
+  project = var.project_id
+  role    = "roles/bigquery.jobUser"
+  member  = "serviceAccount:${google_service_account.reporting.email}"
+}
+
+resource "google_storage_bucket_iam_member" "reporting_gcs_writer" {
+  bucket = google_storage_bucket.reporting.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.reporting.email}"
+}
+
+# =============================================================================
+# Data Masking — Fine-Grained Access Control
+# =============================================================================
+
+# Transformation SA needs to read/write real (unmasked) data during dbt runs
+resource "google_data_catalog_taxonomy_iam_member" "transformation_fine_grained_reader" {
+  taxonomy = google_data_catalog_taxonomy.pii.id
+  role     = "roles/datacatalog.categoryFineGrainedReader"
+  member   = "serviceAccount:${google_service_account.transformation.email}"
+}
+
+# Current user sees masked data by default
+data "google_client_openid_userinfo" "current_user" {}
+
+resource "google_project_iam_member" "user_masked_reader" {
+  project = var.project_id
+  role    = "roles/bigquerydatapolicy.maskedReader"
+  member  = "user:${data.google_client_openid_userinfo.current_user.email}"
 }
